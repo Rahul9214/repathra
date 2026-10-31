@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# REPATHRA
 
-## Getting Started
+Progress is not disposable.
 
-First, run the development server:
+REPATHRA 2.0 is an intelligent workflow recovery platform. Module 001 is the foundation: feature boundaries, shared contracts, configuration, a Drizzle schema for cloud PostgreSQL, a health endpoint, tests, and CI. The eight product capabilities are registered here and are not implemented yet.
+
+## Capabilities
+
+1. Journey Studio
+2. Resume Anywhere
+3. Live Signal Inbox
+4. AI Incident Analyst
+5. Recovery Plan Composer
+6. Trust and Approval Desk
+7. Recovery Runner
+8. Evidence and Outcomes
+
+## Local development
+
+Use native Windows, Node.js 22, and pnpm. Docker and WSL are not required. The application uses a pooled Neon `DATABASE_URL`. Migrations use the direct `DATABASE_URL_UNPOOLED`.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.example` to `.env.local` only when you have the Neon connection strings. Until `DATABASE_URL` is set, the app still starts and `GET /api/health` reports the database as `not_configured`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Next.js development server |
+| `pnpm typecheck` | TypeScript |
+| `pnpm lint` | ESLint |
+| `pnpm test` | Vitest |
+| `pnpm build` | Production build |
+| `pnpm db:generate` | Create a Drizzle migration from the schema |
+| `pnpm db:migrate` | Apply migrations to the configured cloud database |
+| `pnpm db:seed` | Upsert the product identity and eight capabilities |
 
-## Learn More
+`db:migrate` uses `DATABASE_URL_UNPOOLED` and exits before connecting when that direct URL is missing. It does not fall back to a pooled `DATABASE_URL`. `db:seed` uses `DATABASE_URL` and exits before connecting when that variable is missing.
 
-To learn more about Next.js, take a look at the following resources:
+## Documentation
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Engineering notes live in [docs/engineering](docs/engineering/architecture.md).

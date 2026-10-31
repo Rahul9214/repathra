@@ -1,0 +1,1 @@
+export { trustAndApprovalDesk } from "./contract";
