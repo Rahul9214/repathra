@@ -17,6 +17,14 @@ export function StudioShell({ children }: { children: ReactNode }) {
             {PRODUCT.name}
           </Link>
           <span className="brand-badge">Journey Studio</span>
+          <div className="studio-nav-links">
+            <Link href="/" className="nav-tab-link">
+              Workflows
+            </Link>
+            <Link href="/runs" className="nav-tab-link">
+              My Journeys
+            </Link>
+          </div>
         </div>
         <div className="nav-actions">
           <Suspense fallback={<span className="badge badge-status-draft">Checking operator…</span>}>

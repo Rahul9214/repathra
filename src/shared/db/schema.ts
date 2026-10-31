@@ -10,6 +10,12 @@ export {
   journeyVersion,
 } from "./journey-schema";
 
+export {
+  journeyRun,
+  journeyRunEvent,
+  journeyRunStatusEnum,
+} from "./run-schema";
+
 export const capabilityIdEnum = pgEnum("capability_id", CAPABILITY_IDS);
 export const capabilityStatusEnum = pgEnum("capability_status", CAPABILITY_STATUSES);
 

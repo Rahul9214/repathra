@@ -10,6 +10,7 @@ import {
 import { JourneyMap } from "@/components/studio/journey-map";
 import { StepSettings } from "@/components/studio/step-settings";
 import { OperatorSignInButton } from "@/components/studio/clerk-operator";
+import { StartJourneyButton } from "@/components/runs/start-journey-button";
 import type { JourneyDocument } from "@/features/journey-studio/model";
 import type { StoredVersionSummary } from "@/platform/journeys/repository";
 
@@ -132,14 +133,17 @@ export function PublishedViewer({
             ) : null}
           </div>
 
+          {/* Start Journey Button */}
+          <StartJourneyButton slug={slug} versionNumber={versionNumber} />
+
           {/* Action Button: Edit or Sign In */}
           {canEdit ? (
-            <Link href={`/journeys/${slug}`} className="button button-primary button-sm">
+            <Link href={`/journeys/${slug}`} className="button button-secondary button-sm">
               <span>Open Draft Editor</span>
               <IconArrowRight />
             </Link>
           ) : (
-            <OperatorSignInButton label="Sign In to Edit" className="button button-primary button-sm" />
+            <OperatorSignInButton label="Sign In to Edit" className="button button-quiet button-sm" />
           )}
         </div>
       </header>
