@@ -108,6 +108,15 @@ export function IncidentDetailView({ initialDetail }: IncidentDetailViewProps) {
             <span className={`badge-severity badge-severity-${incident.severity}`}>
               {incident.severity.toUpperCase()}
             </span>
+            {signals[0]?.provenance === "diagnostic" ? (
+              <span className="badge-provenance-diagnostic">
+                DIAGNOSTIC
+              </span>
+            ) : (
+              <span className="badge-provenance-live">
+                LIVE
+              </span>
+            )}
             <span className="badge-source">
               {incident.source} [{incident.operation}]
             </span>

@@ -404,6 +404,7 @@ export async function listStoredIncidents(
               httpStatus: latestSig.httpStatus ?? null,
               durationMs: latestSig.durationMs,
               failureCategory: latestSig.failureCategory as FailureCategory,
+              provenance: latestSig.provenance as SignalProvenance,
             }
           : null,
       };

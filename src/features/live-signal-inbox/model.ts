@@ -152,5 +152,6 @@ export interface IncidentListItem extends IncidentRecord {
     httpStatus: number | null;
     durationMs: number;
     failureCategory: FailureCategory;
+    provenance: SignalProvenance;
   } | null;
 }

@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { connection } from "next/server";
 
-import { BoardLoading, StudioShell } from "@/components/studio/chrome";
+import { BoardLoading } from "@/components/studio/chrome";
 import { OperatorAccessCard } from "@/components/studio/clerk-operator";
 import { IncidentListView } from "@/components/signals/incident-list-view";
 import { getCurrentOperatorAuth, openSignalDatabase } from "@/platform/signals/live";
@@ -9,13 +9,11 @@ import { listStoredIncidents } from "@/platform/signals/repository";
 
 export default function SignalsPage() {
   return (
-    <StudioShell>
-      <main id="board">
-        <Suspense fallback={<BoardLoading label="Loading Live Signal Inbox…" />}>
-          <SignalsContent />
-        </Suspense>
-      </main>
-    </StudioShell>
+    <main id="board">
+      <Suspense fallback={<BoardLoading label="Loading Live Signal Inbox…" />}>
+        <SignalsContent />
+      </Suspense>
+    </main>
   );
 }
 

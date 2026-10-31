@@ -36,7 +36,8 @@ export function IncidentListView({ initialIncidents }: IncidentListViewProps) {
 
   const stats = useMemo(() => {
     let openCount = 0;
-    let highOrCriticalCount = 0;
+    let unresolvedHighOrCriticalCount = 0;
+    let resolvedHighOrCriticalCount = 0;
     let acknowledgedCount = 0;
     let resolvedCount = 0;
 
@@ -44,10 +45,25 @@ export function IncidentListView({ initialIncidents }: IncidentListViewProps) {
       if (inc.status === "open") openCount++;
       if (inc.status === "acknowledged") acknowledgedCount++;
       if (inc.status === "resolved") resolvedCount++;
-      if (inc.severity === "critical" || inc.severity === "high") highOrCriticalCount++;
+
+      const isHighOrCritical = inc.severity === "critical" || inc.severity === "high";
+      if (isHighOrCritical) {
+        if (inc.status === "resolved") {
+          resolvedHighOrCriticalCount++;
+        } else {
+          unresolvedHighOrCriticalCount++;
+        }
+      }
     }
 
-    return { openCount, highOrCriticalCount, acknowledgedCount, resolvedCount, total: incidents.length };
+    return {
+      openCount,
+      unresolvedHighOrCriticalCount,
+      resolvedHighOrCriticalCount,
+      acknowledgedCount,
+      resolvedCount,
+      total: incidents.length,
+    };
   }, [incidents]);
 
   const filteredIncidents = useMemo(() => {
@@ -180,8 +196,11 @@ export function IncidentListView({ initialIncidents }: IncidentListViewProps) {
           <span className="stat-value stat-value-open">{stats.openCount}</span>
         </div>
         <div className="stat-card">
-          <span className="stat-label">Critical / High Severity</span>
-          <span className="stat-value stat-value-high">{stats.highOrCriticalCount}</span>
+          <span className="stat-label">Critical / High (Unresolved)</span>
+          <span className="stat-value stat-value-high">{stats.unresolvedHighOrCriticalCount}</span>
+          <span className="stat-sub">
+            {stats.resolvedHighOrCriticalCount} historical resolved
+          </span>
         </div>
         <div className="stat-card">
           <span className="stat-label">Acknowledged</span>
@@ -297,6 +316,15 @@ export function IncidentListView({ initialIncidents }: IncidentListViewProps) {
                   <span className={`badge-severity badge-severity-${inc.severity}`}>
                     {inc.severity.toUpperCase()}
                   </span>
+                  {inc.latestSignalSummary?.provenance === "diagnostic" ? (
+                    <span className="badge-provenance-diagnostic">
+                      DIAGNOSTIC
+                    </span>
+                  ) : (
+                    <span className="badge-provenance-live">
+                      LIVE
+                    </span>
+                  )}
                   <span className="badge-source">
                     {inc.source} [{inc.operation}]
                   </span>

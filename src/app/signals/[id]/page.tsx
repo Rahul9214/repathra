@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 
-import { BoardLoading, StudioShell } from "@/components/studio/chrome";
+import { BoardLoading } from "@/components/studio/chrome";
 import { OperatorAccessCard } from "@/components/studio/clerk-operator";
 import { IncidentDetailView } from "@/components/signals/incident-detail-view";
 import { getCurrentOperatorAuth, openSignalDatabase } from "@/platform/signals/live";
@@ -16,13 +16,11 @@ export default async function IncidentPage({
   const { id } = await params;
 
   return (
-    <StudioShell>
-      <main id="board">
-        <Suspense fallback={<BoardLoading label="Loading incident telemetry…" />}>
-          <IncidentDetailContent id={id} />
-        </Suspense>
-      </main>
-    </StudioShell>
+    <main id="board">
+      <Suspense fallback={<BoardLoading label="Loading incident telemetry…" />}>
+        <IncidentDetailContent id={id} />
+      </Suspense>
+    </main>
   );
 }
 

@@ -3274,6 +3274,13 @@ textarea {
   color: #27ae60;
 }
 
+.stat-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 0.2rem;
+}
+
 /* Toolbar & Tabs */
 .inbox-toolbar {
   display: flex;
