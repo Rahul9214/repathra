@@ -1,12 +1,12 @@
 # Architecture
 
-REPATHRA 2.0 module 001 established the locked product contract. Module 002 adds Journey Studio on that foundation.
+REPATHRA 2.0 module 001 established the locked product contract. Module 002 added Journey Studio. Module 003 adds Resume Anywhere on that foundation.
 
 ## Layout
 
-- `src/app` — Next.js App Router. The home page is Journey Studio. `src/app/api/health/route.ts` remains the public readiness endpoint. Journey routes live under `src/app/api/journeys` and `src/app/journeys`.
-- `src/features/<capability>` — one folder per locked capability. Journey Studio now holds the step schema, graph validation, sandbox templates, and publish rules. The other seven capabilities stay `registered`.
-- `src/features/journey-studio` does not open a database connection. `src/platform/journeys` persists drafts and published versions.
+- `src/app` — Next.js App Router. The home page is the Journey Directory. `src/app/api/health/route.ts` remains the public readiness endpoint. Journey authoring routes live under `src/app/api/journeys` and `src/app/journeys`. Run execution routes live under `src/app/api/runs`, `src/app/runs`, and `src/app/runs/[id]`.
+- `src/features/<capability>` — one folder per locked capability. Journey Studio holds the step schema, graph validation, sandbox templates, and publish rules. Resume Anywhere holds the run domain model, transition engine, validation schemas, and messages. The other six capabilities stay `registered`.
+- `src/features/journey-studio` and `src/features/resume-anywhere` do not open database connections. `src/platform/journeys` persists drafts and published versions; `src/platform/runs` persists runs, revisions, and durable events.
 - `src/shared/contracts` — product identity, the eight capability ids and names, health types, and the comparison used against rows stored in PostgreSQL.
 - `src/shared/config` — server-side environment parsing, including Clerk key presence.
 - `src/shared/validation` — Zod schemas for the capability contract and the health report.
@@ -17,7 +17,7 @@ REPATHRA 2.0 module 001 established the locked product contract. Module 002 adds
 
 ## Capability status
 
-`registered` remains the only capability status. The health contract from module 001 compares capability ids and names, and the health schema still requires `registered`. Journey Studio behavior is implemented beside that row. Changing the status would make the live health check fail the locked contract.
+`registered` remains the only capability status. The health contract from module 001 compares capability ids and names, and the health schema still requires `registered`. Journey Studio and Resume Anywhere behaviors are implemented beside that row. Changing the status would make the live health check fail the locked contract.
 
 ## Journey Studio
 
@@ -30,6 +30,35 @@ Publishing copies the validated draft into `journey_version`, stores a SHA-256 c
 `vendor-onboarding` and `service-intake` are synthetic sandbox journeys. Their definitions carry the sandbox notice, and seed inserts version 1 only when that version is absent. Seed does not rewrite a published version.
 
 Public journey previews, route diagrams, and version history can be read without authentication. Draft saves, new operator journeys, and publishing require an explicitly authorized operator session. If either Clerk key is missing, mutating actions fail closed with `auth_not_configured`. A configured Clerk instance with no signed-in user returns `unauthenticated` with an interactive sign-in action and preview states. Signed-in accounts without operator authorization are denied with `unauthorized`. Server-side operator permission is verified through operator/admin roles, organization permissions, `OPERATOR_USER_IDS` allowlist, or explicit operator claims. `GET /api/health` stays public.
+
+## Resume Anywhere
+
+Resume Anywhere enables an authenticated user to start an execution run against an immutable published journey version, complete supported steps, leave, and continue from the exact persisted step on any session, tab, or device.
+
+### Immutable Version Binding
+- A run is instantiated strictly against a published `journey_version` row, recording `journey_version_id`, `version_number`, and `content_hash`.
+- Runs are never started against drafts.
+- Publishing subsequent versions of a journey never alters or rebinds existing runs; each run executes against its frozen snapshot.
+
+### Deterministic Server-Side State Machine
+Step transitions execute via a pure deterministic engine against the frozen `JourneyDocument`:
+- `collect`: Validates that required fields are provided with non-empty trimmed strings (max 2000 chars), storing accepted values into `collected_values`.
+- `review`: Requires explicit user acknowledgment (`acknowledged === true`) before advancing.
+- `decide`: Requires selecting a valid outcome id matching one of the step's defined outcomes.
+- `wait`: Pauses execution with `status = "paused"` awaiting a future signal from Live Signal Inbox. Attempted manual step advancement is strictly rejected with `step_paused_waiting_for_signal`.
+- `handoff`: Pauses execution with `status = "paused"` awaiting authorized handoff clearance. Attempted manual step advancement is strictly rejected with `step_paused_waiting_for_handoff`.
+- `complete`: Terminal state with `status = "completed"`. Records `completed_outcome` and `completed_at`. Rejects any further transition attempts with `run_already_completed`.
+
+### Authentication and Ownership
+- Run ownership is authenticated server-side using Clerk `auth().userId`.
+- Ordinary authenticated users can own and execute runs without receiving Journey Studio operator privileges.
+- Every read (`GET /api/runs`, `GET /api/runs/[id]`) and mutation (`POST /api/runs`, `POST /api/runs/[id]/step`) enforces strict owner isolation. Users cannot inspect or mutate runs owned by another account.
+- Anonymous or unconfigured authentication fails closed (`401 unauthenticated` or `503 auth_not_configured`).
+
+### Concurrency and Idempotency
+- All state modifications run inside PostgreSQL transactions with optimistic revision checks (`revision = expectedRevision`). Conflicting concurrent requests or stale browser tabs receive HTTP 409 `revision_conflict`.
+- Every transition appends an immutable entry to `journey_run_event`.
+- Idempotency keys prevent double submissions from double clicks or network retries by replaying the existing successful result.
 
 
 ## Health

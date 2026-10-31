@@ -2,12 +2,12 @@
 
 Progress is not disposable.
 
-REPATHRA 2.0 is an intelligent workflow recovery platform. Module 001 is the foundation: feature boundaries, shared contracts, configuration, a Drizzle schema for cloud PostgreSQL, a health endpoint, tests, and CI. Module 002 implements Journey Studio. The other seven capabilities stay registered.
+REPATHRA 2.0 is an intelligent workflow recovery platform. Module 001 is the foundation: feature boundaries, shared contracts, configuration, a Drizzle schema for cloud PostgreSQL, a health endpoint, tests, and CI. Module 002 delivers Journey Studio. Module 003 implements Resume Anywhere — persistent, cross-device execution of immutable published journeys with deterministic transitions, revision checks, owner isolation, and durable event logs. The other six capabilities stay registered.
 
 ## Capabilities
 
 1. Journey Studio — editable drafts, validated steps, and immutable published versions
-2. Resume Anywhere
+2. Resume Anywhere — durable run identity, deterministic step transitions, optimistic concurrency checks, and cross-device state resumption
 3. Live Signal Inbox
 4. AI Incident Analyst
 5. Recovery Plan Composer

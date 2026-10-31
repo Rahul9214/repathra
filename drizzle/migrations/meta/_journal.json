@@ -15,6 +15,13 @@
       "when": 1793420009116,
       "tag": "0001_windy_marvex",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793462180263,
+      "tag": "0002_skinny_firedrake",
+      "breakpoints": true
     }
   ]
 }

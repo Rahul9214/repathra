@@ -15,7 +15,12 @@ No journey, signal, incident, approval, or evidence tables were created in modul
 - `journey_draft` stores the single editable draft for a journey, including its revision and step document.
 - `journey_version` stores immutable published snapshots and a SHA-256 content hash. `BEFORE UPDATE` and `BEFORE DELETE` triggers reject mutation.
 
-The module 001 migration is not rewritten. `pnpm db:migrate` applies only pending files through `DATABASE_URL_UNPOOLED`.
+Module 003 adds two tables in `0002_skinny_firedrake.sql`:
+
+- `journey_run` stores persistent execution instances for an authenticated user. It holds the run id (UUID), foreign keys to `journey_definition` and `journey_version`, the immutable `version_number` and `content_hash`, the Clerk `owner_id`, `current_step_id`, status (`active`, `paused`, `completed`), revision (optimistic concurrency counter, >= 1), collected values JSONB, completed step IDs JSONB, terminal outcome, and timestamps.
+- `journey_run_event` stores the durable audit log of state transitions for each run. It records run id (cascading foreign key), sequence number, event type (`run_started`, `step_transitioned`, `run_paused`, `run_completed`), from and to step ids, action payload JSONB, idempotency key (unique per run), actor id, and timestamp.
+
+The module 001 and 002 migrations are not rewritten. `pnpm db:migrate` applies only pending files through `DATABASE_URL_UNPOOLED`.
 
 ## Seed
 
