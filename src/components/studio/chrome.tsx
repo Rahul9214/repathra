@@ -24,6 +24,9 @@ export function StudioShell({ children }: { children: ReactNode }) {
             <Link href="/runs" className="nav-tab-link">
               My Journeys
             </Link>
+            <Link href="/signals" className="nav-tab-link">
+              Signal Inbox
+            </Link>
           </div>
         </div>
         <div className="nav-actions">

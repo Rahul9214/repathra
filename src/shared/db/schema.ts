@@ -16,6 +16,16 @@ export {
   journeyRunStatusEnum,
 } from "./run-schema";
 
+export {
+  failureCategoryEnum,
+  incident,
+  incidentEvent,
+  incidentSeverityEnum,
+  incidentStatusEnum,
+  signal,
+  signalProvenanceEnum,
+} from "./signal-schema";
+
 export const capabilityIdEnum = pgEnum("capability_id", CAPABILITY_IDS);
 export const capabilityStatusEnum = pgEnum("capability_status", CAPABILITY_STATUSES);
 

@@ -20,7 +20,13 @@ Module 003 adds two tables in `0002_skinny_firedrake.sql`:
 - `journey_run` stores persistent execution instances for an authenticated user. It holds the run id (UUID), foreign keys to `journey_definition` and `journey_version`, the immutable `version_number` and `content_hash`, the Clerk `owner_id`, `current_step_id`, status (`active`, `paused`, `completed`), revision (optimistic concurrency counter, >= 1), collected values JSONB, completed step IDs JSONB, terminal outcome, and timestamps.
 - `journey_run_event` stores the durable audit log of state transitions for each run. It records run id (cascading foreign key), sequence number, event type (`run_started`, `step_transitioned`, `run_paused`, `run_completed`), from and to step ids, action payload JSONB, idempotency key (unique per run), actor id, and timestamp.
 
-The module 001 and 002 migrations are not rewritten. `pnpm db:migrate` applies only pending files through `DATABASE_URL_UNPOOLED`.
+Module 004 adds three tables and four enums in `0003_medical_the_fury.sql`:
+
+- `incident` stores correlated, durable failure incidents. It holds the incident id (UUID), deterministic SHA-256 fingerprint, title, source, operation, optional `signal_key`, severity (`critical`, `high`, `medium`, `low`), status (`open`, `acknowledged`, `resolved`), occurrence counter (>= 1), first/last seen timestamps, and operator resolution audit fields (`acknowledged_at`, `acknowledged_by`, `resolved_at`, `resolved_by`, `resolution_note`).
+- `signal` stores immutable evidence captured from the HTTP observation boundary or authenticated webhooks. It records signal id (UUID), foreign key to `incident.id` (cascading), provenance (`observed_http`, `authenticated_webhook`, `diagnostic`), source, operation, optional `signal_key`, optional foreign key to `journey_run.id` (ON DELETE SET NULL), HTTP method, sanitized URL, response status, duration in ms (>= 0), failure category (`http_4xx`, `http_5xx`, `timeout`, `network_error`, `tls_error`, `payload_error`), correlation ID, unique idempotency key, sanitized telemetry JSONB (redacted headers), metadata JSONB, and occurrence timestamp.
+- `incident_event` stores the immutable audit trail for each incident: foreign key to `incident.id` (cascading), event type (`incident_opened`, `signal_attached`, `incident_acknowledged`, `incident_resolved`), operator/actor ID, audit notes, and creation timestamp.
+
+The module 001, 002, and 003 migrations are not rewritten. `pnpm db:migrate` applies only pending files through `DATABASE_URL_UNPOOLED`.
 
 ## Seed
 
