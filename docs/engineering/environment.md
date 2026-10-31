@@ -9,6 +9,8 @@ Server configuration is read through `loadConfig` in `src/shared/config/env.ts`.
 | `DATABASE_URL` | Required for readiness and seed | Pooled Neon URL. Server-only. `postgresql://` or `postgres://`. Non-local hosts must require TLS. |
 | `DATABASE_URL_UNPOOLED` | Required for migrations when `DATABASE_URL` is pooled | Direct Neon URL. Server-only. Migrations do not use the pooler. |
 | `NODE_ENV` | Set by Next.js and the test runner | `development`, `test`, or `production`. An unknown value is a configuration error. |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Required to edit or publish | Clerk publishable key. Safe to expose to the browser. Must start with `pk_test_` or `pk_live_`. |
+| `CLERK_SECRET_KEY` | Required to edit or publish | Clerk secret key. Server-only. Must start with `sk_test_` or `sk_live_`. |
 
 There is no `NEXT_PUBLIC_` database setting. The browser bundle must not receive the connection string.
 
@@ -21,6 +23,8 @@ There is no `NEXT_PUBLIC_` database setting. The browser bundle must not receive
 A remote URL is rejected when the scheme is wrong, the host, database name, username, or password is missing, or `sslmode` is not `require`, `verify-ca`, or `verify-full`. A loopback host (`localhost`, `127.0.0.1`, `::1`) may omit TLS.
 
 Invalid configuration does not crash the Next.js process. The existing pages still render. Readiness fails closed: `/api/health` returns 503 and does not open a connection.
+
+Journey Studio also fails closed when either Clerk key is missing or unusable. The home page still renders published journeys, and edit or publish actions return `auth_not_configured`. The missing key value is never copied into the message. Clerk keyless provisioning is disabled, so a missing key is not replaced with a generated credential.
 
 ## Drizzle Kit
 

@@ -2,11 +2,11 @@
 
 Progress is not disposable.
 
-REPATHRA 2.0 is an intelligent workflow recovery platform. Module 001 is the foundation: feature boundaries, shared contracts, configuration, a Drizzle schema for cloud PostgreSQL, a health endpoint, tests, and CI. The eight product capabilities are registered here and are not implemented yet.
+REPATHRA 2.0 is an intelligent workflow recovery platform. Module 001 is the foundation: feature boundaries, shared contracts, configuration, a Drizzle schema for cloud PostgreSQL, a health endpoint, tests, and CI. Module 002 implements Journey Studio. The other seven capabilities stay registered.
 
 ## Capabilities
 
-1. Journey Studio
+1. Journey Studio — editable drafts, validated steps, and immutable published versions
 2. Resume Anywhere
 3. Live Signal Inbox
 4. AI Incident Analyst
@@ -37,7 +37,7 @@ Copy `.env.example` to `.env.local` only when you have the Neon connection strin
 | `pnpm build` | Production build |
 | `pnpm db:generate` | Create a Drizzle migration from the schema |
 | `pnpm db:migrate` | Apply migrations to the configured cloud database |
-| `pnpm db:seed` | Upsert the product identity and eight capabilities |
+| `pnpm db:seed` | Upsert the product identity, eight capabilities, and two synthetic sandbox journeys |
 
 `db:migrate` uses `DATABASE_URL_UNPOOLED` and exits before connecting when that direct URL is missing. It does not fall back to a pooled `DATABASE_URL`. `db:seed` uses `DATABASE_URL` and exits before connecting when that variable is missing.
 

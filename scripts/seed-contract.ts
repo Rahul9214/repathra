@@ -1,3 +1,4 @@
+import { seedJourneyTemplates } from "@/platform/journeys/seed-templates";
 import { seedProductContract } from "@/platform/seed-contract";
 import { loadConfig } from "@/shared/config/env";
 import { loadProjectEnv } from "@/shared/config/load-env";
@@ -25,6 +26,16 @@ async function main(): Promise<void> {
   }
 
   console.log(`Recorded REPATHRA ${result.version} and ${result.capabilityCount} registered capabilities.`);
+
+  const journeys = await seedJourneyTemplates(loaded.config.database.connectionString);
+  if (!journeys.ok) {
+    console.error(journeys.message);
+    process.exit(1);
+  }
+
+  console.log(
+    `Sandbox journeys ready: ${journeys.templates}. New published versions: ${journeys.versionsInserted}. New drafts: ${journeys.draftsInserted}.`,
+  );
 }
 
 main().catch(() => {

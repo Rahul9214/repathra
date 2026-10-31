@@ -3,15 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
-  serverExternalPackages: ["postgres"],
-  turbopack: {
-    rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
-      },
-    },
+  env: {
+    NEXT_PUBLIC_CLERK_KEYLESS_DISABLED: "true",
   },
+  serverExternalPackages: ["postgres"],
 };
 
 export default nextConfig;

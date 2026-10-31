@@ -2,6 +2,14 @@ import { integer, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 import { CAPABILITY_IDS, CAPABILITY_STATUSES } from "../contracts/capability";
 
+export {
+  journeyDefinition,
+  journeyDraft,
+  journeyOriginEnum,
+  journeyTemplateKeyEnum,
+  journeyVersion,
+} from "./journey-schema";
+
 export const capabilityIdEnum = pgEnum("capability_id", CAPABILITY_IDS);
 export const capabilityStatusEnum = pgEnum("capability_status", CAPABILITY_STATUSES);
 
