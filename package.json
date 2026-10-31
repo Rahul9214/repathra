@@ -17,6 +17,7 @@
     "db:seed": "tsx scripts/seed-contract.ts"
   },
   "dependencies": {
+    "@clerk/nextjs": "^7.9.22",
     "drizzle-orm": "^0.45.4",
     "next": "16.4.3",
     "postgres": "^3.4.9",

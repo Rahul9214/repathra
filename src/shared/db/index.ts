@@ -6,4 +6,14 @@ export {
 } from "@/shared/db/drizzle-credentials";
 export { probeDatabase } from "@/shared/db/probe";
 export type { DatabaseProbeResult } from "@/shared/db/probe";
-export { capability, capabilityIdEnum, capabilityStatusEnum, platformRelease } from "@/shared/db/schema";
+export {
+  capability,
+  capabilityIdEnum,
+  capabilityStatusEnum,
+  journeyDefinition,
+  journeyDraft,
+  journeyOriginEnum,
+  journeyTemplateKeyEnum,
+  journeyVersion,
+  platformRelease,
+} from "@/shared/db/schema";
