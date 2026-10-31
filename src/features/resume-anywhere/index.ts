@@ -1,0 +1,1 @@
+export { resumeAnywhere } from "./contract";

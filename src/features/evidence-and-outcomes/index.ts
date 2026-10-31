@@ -1,0 +1,1 @@
+export { evidenceAndOutcomes } from "./contract";
