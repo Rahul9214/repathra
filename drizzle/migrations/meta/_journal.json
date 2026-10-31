@@ -22,6 +22,13 @@
       "when": 1793462180263,
       "tag": "0002_skinny_firedrake",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793467200390,
+      "tag": "0003_medical_the_fury",
+      "breakpoints": true
     }
   ]
 }

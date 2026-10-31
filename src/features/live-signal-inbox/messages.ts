@@ -1,0 +1,16 @@
+export const SIGNAL_MESSAGES = {
+  unauthenticated: "Sign in with an authorized operator account to access the Live Signal Inbox.",
+  forbidden_operator_required: "Live Signal Inbox management requires authorized operator privileges.",
+  auth_not_configured: "Authentication is not configured in this environment.",
+  database_not_configured: "Database connection is not configured.",
+  incident_not_found: "The requested incident does not exist.",
+  signal_not_found: "The requested signal could not be found.",
+  invalid_action: "The requested incident action is invalid.",
+  resolution_note_required: "A resolution note is required when resolving an incident.",
+  incident_already_resolved: "This incident has already been resolved.",
+  empty_inbox_title: "No incidents detected",
+  empty_inbox_description: "All upstream integrations are healthy or no live providers are currently configured.",
+  diagnostic_probe_title: "Diagnostic probe",
+  diagnostic_probe_description: "Controlled observation boundary probe executed for telemetry verification.",
+  safeguard_workflow_notice: "REPATHRA Safeguard: Incidents are correlated for operator situational awareness. Workflow execution is not auto-advanced in Module 004.",
+} as const;

@@ -60,8 +60,36 @@ Step transitions execute via a pure deterministic engine against the frozen `Jou
 - Every transition appends an immutable entry to `journey_run_event`.
 - Idempotency keys prevent double submissions from double clicks or network retries by replaying the existing successful result.
 
+## Live Signal Inbox
 
-## Health
+Live Signal Inbox (Module 004) introduces an operational signal intake boundary for REPATHRA, capturing authentic evidence from upstream integrations, deterministically classifying failures, and providing operator lifecycle management.
+
+### Server-Side HTTP Observation Boundary
+- Server-side wrapper (`observeHttpCall`) intercepts actual outbound HTTP requests to explicitly configured or permitted integration hosts.
+- Strictly captures bounded, sanitized telemetry: method, sanitized URL (sensitive query parameters masked), response status code, latency (ms), and sanitized headers.
+- Secrets, tokens, cookies, authorization headers, and sensitive bodies are redacted (`[REDACTED]`).
+- Outbound SSRF guard enforces target validation against an allowlist of permitted hosts. Arbitrary client-controlled URL fetching is prohibited.
+
+### Provenance and Ingestion
+Signals record verified provenance:
+- `observed_http`: First-party HTTP request/response observed through REPATHRA's boundary.
+- `authenticated_webhook`: External webhook report authenticated with a configured shared secret (`SIGNALS_WEBHOOK_SECRET`). Unauthenticated public requests are rejected.
+- `diagnostic`: Controlled diagnostic probe executed by an authorized operator to verify telemetry and pipeline connectivity. Strictly labeled to prevent simulated fixtures from masquerading as customer incidents.
+
+### Deterministic Correlation and Incident Lifecycle
+- Signals are grouped into durable incidents using a canonical SHA-256 fingerprint:
+  `sha256(source + ":" + operation + ":" + failureCategory + (signalKey ? ":" + signalKey : ""))`
+- Existing open or acknowledged incidents are updated with an incremented occurrence counter, refreshed `lastSeenAt`, and upgraded severity when a more critical failure arrives.
+- Incidents progress through three states:
+  - `open`: Initial state upon detection.
+  - `acknowledged`: Operator has taken ownership.
+  - `resolved`: Audited resolution with required operator resolution notes (min 3 characters). Incidents are never auto-resolved without verified recovery evidence or operator action.
+- Every state transition appends an immutable event to `incident_event`.
+
+### Workflow Relationship & SAFEGUARD
+- Incidents with a `signalKey` or `runId` correlate automatically with paused journey runs from Module 003 (e.g. `vendor-onboarding` paused at `wait-registry` with `signalKey: "vendor-registry"`).
+- **CRITICAL SAFEGUARD**: Live Signal Inbox correlates paused runs strictly for situational awareness. It **does NOT auto-advance paused runs**. Deterministic step transitions and owner boundaries from Module 003 are fully preserved.
+
 
 `GET /api/health` is unauthenticated readiness. It always lists the eight capabilities from the TypeScript registry. The database section is a separate check:
 
